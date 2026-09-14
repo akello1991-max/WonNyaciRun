@@ -2,6 +2,16 @@
 
 A production-ready starter website/CMS for **Won Nyaci Run 2026**, an initiative under the Lango Cultural Institution (Tekwaro Lango).
 
+## Deployment
+
+Railway runs the Laravel API and database. Netlify serves the static Vue frontend. Set this Netlify environment variable to the public Railway URL, then redeploy:
+
+```env
+VITE_API_URL=https://your-railway-public-domain
+```
+
+Without `VITE_API_URL`, Netlify's SPA fallback returns `index.html` for API requests, so dynamic payments, partners, clans, practice resources, stories, and X updates cannot load.
+
 ## Stack
 - Laravel 12 / PHP 8.2+
 - Vue 3 + Vite

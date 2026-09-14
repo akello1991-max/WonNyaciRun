@@ -17,7 +17,7 @@
             <p>Official payment instructions</p>
           </div>
 
-          <div v-for="(p, i) in payments" :key="p.id" class="payment-row">
+          <div v-for="(p, i) in visiblePayments" :key="p.id || p.method" class="payment-row">
             <button class="payment-toggle" @click="open = open === i ? -1 : i">
               <span>{{ p.label }}</span>
               <span>{{ open === i ? '−' : '+' }}</span>
@@ -58,6 +58,7 @@
             <h3>Before you pay</h3>
             <p>After payment, keep your transaction receipt. The run team can use your name/reference to confirm your kit.</p>
             <p><b>Need help?</b> WhatsApp the run team from the floating button or contact the organisers.</p>
+            <p v-if="apiError" class="notice">Payment instructions are temporarily unavailable. Please contact the run team for the current details.</p>
           </div>
         </div>
       </div>
@@ -75,12 +76,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 
 const payments = ref([])
+const apiError = ref('')
 const open = ref(0)
 const demoCard = ref(false)
+const visiblePayments = computed(() => payments.value.filter((payment) => payment && payment.label && payment.details))
 
 const pretty = (key) => key.replaceAll('_', ' ').replace(/\b\w/g, (m) => m.toUpperCase())
 const isCopyable = (value) => typeof value === 'string' && value.length < 80
@@ -93,8 +96,14 @@ const copy = async (value) => {
 }
 
 onMounted(async () => {
-  const { data } = await axios.get('/api/payments')
-  payments.value = data
+  try {
+    const { data } = await axios.get('/api/payments')
+    if (!Array.isArray(data)) throw new Error('Invalid payment response')
+    payments.value = data.filter((payment) => payment?.label && payment?.details)
+  } catch {
+    apiError.value = 'Payment API unavailable'
+    payments.value = []
+  }
 })
 </script>
 

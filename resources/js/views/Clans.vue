@@ -5,5 +5,5 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 const clans = ref([])
-onMounted(async () => { clans.value = (await axios.get('/api/clans')).data })
+onMounted(async () => { try { const { data } = await axios.get('/api/clans'); clans.value = Array.isArray(data) ? data : [] } catch { clans.value = [] } })
 </script>

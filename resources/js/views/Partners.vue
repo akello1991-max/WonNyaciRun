@@ -4,6 +4,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-const partners = ref([])
-onMounted(async () => { partners.value = (await axios.get('/api/partners')).data })
+const partners = ref([]), apiError = ref(false)
+onMounted(async () => { try { const { data } = await axios.get('/api/partners'); if (!Array.isArray(data)) throw new Error(); partners.value = data } catch { apiError.value = true } })
 </script>
