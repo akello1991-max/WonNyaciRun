@@ -1,6 +1,7 @@
 [phases.setup]
 php = "8.3"
 nodejs = "22"
+nixPkgs = ["php83Extensions.pdo_mysql", "php83Extensions.pdo_sqlite", "php83Extensions.mbstring", "php83Extensions.curl", "php83Extensions.fileinfo", "php83Extensions.gd", "php83Extensions.zip"]
 
 [phases.install]
 cmds = ["composer install --no-dev --optimize-autoloader", "npm ci || npm install"]
@@ -9,4 +10,4 @@ cmds = ["composer install --no-dev --optimize-autoloader", "npm ci || npm instal
 cmds = ["npm run build"]
 
 [start]
-cmd = "./start.sh"
+cmd = "bash start.sh"

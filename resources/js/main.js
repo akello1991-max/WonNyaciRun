@@ -21,6 +21,7 @@ import AdminPartners from './views/AdminPartners.vue'
 import './styles.css'
 
 axios.defaults.withCredentials = true
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || ''
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.xsrfCookieName = 'XSRF-TOKEN'
 axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN'
