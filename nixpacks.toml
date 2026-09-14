@@ -1,0 +1,12 @@
+[phases.setup]
+php = "8.3"
+nodejs = "22"
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader", "npm ci || npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "./start.sh"
