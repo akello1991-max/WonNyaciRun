@@ -58,7 +58,7 @@
             <h3>Before you pay</h3>
             <p>After payment, keep your transaction receipt. The run team can use your name/reference to confirm your kit.</p>
             <p><b>Need help?</b> WhatsApp the run team from the floating button or contact the organisers.</p>
-            <p v-if="apiError" class="notice">Payment instructions are temporarily unavailable. Please contact the run team for the current details.</p>
+            <p v-if="apiError" class="notice">Live payment sync is temporarily unavailable. The saved MTN, Airtel and bank instructions are shown below.</p>
           </div>
         </div>
       </div>
@@ -84,6 +84,11 @@ const apiError = ref('')
 const open = ref(0)
 const demoCard = ref(false)
 const visiblePayments = computed(() => payments.value.filter((payment) => payment && payment.label && payment.details))
+const fallbackPayments = [
+  { id: 'mtn-fallback', method: 'mtn', label: 'MTN MOBILE MONEY', details: { dial_code: '*165*4*4#', merchant_code: 'WCCM', reference: "Sponsor's Full Name", amount: 'Enter your kit amount' } },
+  { id: 'airtel-fallback', method: 'airtel', label: 'AIRTEL MONEY', details: { instruction: 'Use the official Won Nyaci Run merchant option.', reference: "Sponsor's Full Name", amount: 'UGX 30,000 standard kit' } },
+  { id: 'bank-fallback', method: 'bank', label: 'BANK TRANSFER', details: { bank: 'CENTENARY', account_name: 'WON NYACI ME LANGO', account_number: '310010849' } }
+]
 
 const pretty = (key) => key.replaceAll('_', ' ').replace(/\b\w/g, (m) => m.toUpperCase())
 const isCopyable = (value) => typeof value === 'string' && value.length < 80
@@ -99,10 +104,11 @@ onMounted(async () => {
   try {
     const { data } = await axios.get('/api/payments')
     if (!Array.isArray(data)) throw new Error('Invalid payment response')
-    payments.value = data.filter((payment) => payment?.label && payment?.details)
+    const validPayments = data.filter((payment) => payment?.label && payment?.details)
+    payments.value = validPayments.length ? validPayments : fallbackPayments
   } catch {
     apiError.value = 'Payment API unavailable'
-    payments.value = []
+    payments.value = fallbackPayments
   }
 })
 </script>
