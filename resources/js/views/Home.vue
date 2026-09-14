@@ -18,5 +18,5 @@ import RunnerHero from '../components/RunnerHero.vue'
 const posts=ref([]), xPosts=ref([])
 const asset=(path)=>path?.startsWith('http')?path:(path?.startsWith('images/')?`/${path}`:`/storage/${path}`)
 const truncate=(text)=>text?.length>120?text.slice(0,120)+'…':text
-onMounted(async()=>{try{const {data}=await axios.get('/api/home');posts.value=data.posts||[];xPosts.value=data.x_posts||[]}catch(e){console.error(e)}})
+onMounted(async()=>{try{const {data}=await axios.get('/api/home');posts.value=Array.isArray(data?.posts)?data.posts:[];xPosts.value=Array.isArray(data?.x_posts)?data.x_posts:[]}catch(e){posts.value=[];xPosts.value=[]}})
 </script>
